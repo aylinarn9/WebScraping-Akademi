@@ -1,0 +1,67 @@
+﻿@using webscraping.Model;
+@model TarihModel
+@{
+    ViewData["Title"] = "TarihFiltre";
+    Layout = "~/Views/Shared/MakaleLayout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinamik Filtreleme</title>
+</head>
+<body>
+
+
+    <form action="/Home/TarihFiltre" method="get">
+        <label>yayinlanmaTarihi:</label>
+
+            @foreach (var yayinlanmaTarihi in Model.TarihListesi)
+            {
+            <div class="form-check">
+                <input type="checkbox" id="@yayinlanmaTarihi" name="yayinlanmaTarihi" value="@yayinlanmaTarihi" class="form-check-input">
+                <label for="@yayinlanmaTarihi" class="form-check-label">@yayinlanmaTarihi</label>
+            </div>
+            }
+       
+
+        <button type="submit" class="btn btn-primary">Filtrele</button>
+
+
+    </form>
+
+
+
+    <ul class="article-list">
+        @foreach (var BilgiModel in ViewBag.mk)
+        {
+            <li class="article-list-item">
+                <h2 class="article-title">@BilgiModel.yayinAd</h2>
+         
+                <p class="article-yazar">@BilgiModel.yazarAdlari</p>
+                <p class="article-tur">@BilgiModel.yayinTürü</p>
+                <p class="article-yayinciad">@BilgiModel.yayinciAd</p>
+                <p class="article-tarih">@BilgiModel.yayinlanmaTarihi</p>
+                <p class="article-anahtarkelime">@BilgiModel.anahtarkelimeler</p>
+                <p class="article-ozet">@BilgiModel.ozet</p>
+                <p class="article-kaynakca">@BilgiModel.kaynakca</p>
+                <p class="article-key">@BilgiModel.aratilanAnahtarkelime</p>
+
+                <p class="article-pdfUrl">@BilgiModel.pdfUrl</p>
+                <a href="@BilgiModel.pdfUrl">Makaleyi İndir</a>
+
+
+
+
+            </li>
+        }
+    </ul>
+
+
+
+</body>
+</html>
+
+

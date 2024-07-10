@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewData["Title"] = "BilgiGetir";
+    Layout = "~/Views/Shared/MakaleLayout.cshtml";
+}
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@using webscraping.Model;
+@model List<BilgiModel>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dergi Makaleleri</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        .article-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .article-list-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .article-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .article-authors {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .article-abstract {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+    <ul class="article-list">
+        @foreach (var BilgiModel in Model)
+        {
+            <li class="article-list-item">
+                <h2 class="article-title">@BilgiModel.yayinAd</h2>
+                <p class="article-yazar">@BilgiModel.yazarAdlari</p>
+                <p class="article-tur">@BilgiModel.yayinTürü</p>
+                <p class="article-yayinciad">@BilgiModel.yayinciAd</p>
+                <p class="article-tarih">@BilgiModel.yayinlanmaTarihi</p>
+                <p class="article-anahtarkelime">@BilgiModel.anahtarkelimeler</p>
+                <p class="article-ozet">@BilgiModel.ozet</p>
+                <p class="article-kaynakca">@BilgiModel.kaynakca</p>
+                <p class="article-key">@BilgiModel.aratilanAnahtarkelime</p>
+
+                <p class="article-pdfUrl">@BilgiModel.pdfUrl</p>
+                <a href="@BilgiModel.pdfUrl">Makaleyi İndir</a>
+            </li>
+        }
+    </ul>
+
+</body>
+</html>
+
+
+

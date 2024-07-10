@@ -1,0 +1,169 @@
+﻿@using webscraping.Model;
+@model List<BilgiModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/MakaleLayout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anahtar Kelime Arama</title>
+</head>
+<body>
+
+
+    <div>
+        <form id="searchForm" onsubmit="return submitForm()">
+            <input type="text" id="keywords" name="keywords" placeholder="Anahtar kelimeyi giriniz" />
+            <button type="button" onclick="submitForm()" title="link" class="btn btn-outline-success">yanlis arama</button>
+        </form>
+        <div id="suggestions"></div>
+
+
+        <form action="/Home/Index/" method="get">
+
+            <input type="text" name="keywords" placeholder="Anahtar kelimeyi giriniz" />
+            <button type="submit" title="link" class="btn btn-outline-success">Arama</button>
+        </form>
+
+    </div>
+
+
+
+
+    <ul class="article-list">
+        @foreach (var BilgiModel in Model)
+        {
+            <li class="article-list-item">
+                <h2 class="article-title">@BilgiModel.yayinAd</h2>
+                <a href="/Home/BilgiGetir/@BilgiModel.yayinAd" class="btn btn-outline-success btn-sm">makale detay</a>
+                <p class="article-yazar">@BilgiModel.yazarAdlari</p>
+                <p class="article-tur">@BilgiModel.yayinTürü</p>
+                <p class="article-yayinciad">@BilgiModel.yayinciAd</p>
+                <p class="article-tarih">@BilgiModel.yayinlanmaTarihi</p>
+                <p class="article-anahtarkelime">@BilgiModel.anahtarkelimeler</p>
+                <p class="article-ozet">@BilgiModel.ozet</p>
+                <p class="article-kaynakca">@BilgiModel.kaynakca</p>
+                <p class="article-key">@BilgiModel.aratilanAnahtarkelime</p>
+                <p class="article-pdfUrl">@BilgiModel.pdfUrl</p>
+                <a href="@BilgiModel.pdfUrl">Pdf İndir</a>
+            </li>
+        }
+    </ul>
+
+
+    <script>
+        function yanlis(key) {
+            var suggestions = tahmin(key);
+            var sozluk = ["learning", "algorithm", "data", "structure", "search"];
+
+          
+            var eslesme = null;
+            var mineslesme = Number.MAX_SAFE_INTEGER;
+
+            for (var i = 0; i < sozluk.length; i++) {
+                var dis = mesafehesaplama(key,sozluk[i]);
+                if (dis < mineslesme) {
+                    mineslesme = dis;
+                    eslesme = sozluk[i];
+                }
+            }
+
+            return eslesme;
+        }
+
+        function tahmin(key) {
+            var suggestions = [];
+
+         
+            for (var i = 0; i < key.length; i++) {
+                var suggestion = key.slice(0, i) + key.slice(i + 1);
+                suggestions.push(suggestion);
+            }
+
+         
+            if (key.length > 1) {
+                suggestions.push(key.slice(0, -1));
+            }
+
+
+            for (var i = 0; i <= key.length; i++) {
+                for (var c = 'a'; c <= 'z'; c++) {
+                    var suggestion = key.slice(0, i) + c + key.slice(i);
+                    suggestions.push(suggestion);
+                }
+            }
+
+        
+            for (var i = 0; i < key.length; i++) {
+                for (var c = 'a'; c <= 'z'; c++) {
+                    if (c !== key[i]) {
+                        var suggestion = key.slice(0, i) + c + key.slice(i + 1);
+                        suggestions.push(suggestion);
+                    }
+                }
+            }
+
+            return suggestions;
+        }
+
+        function mesafehesaplama(s, t) {
+            var n = s.length;
+            var m = t.length;
+            var d = [];
+
+            if (n === 0) return m;
+            if (m === 0) return n;
+
+            for (var i = 0; i <= n; i++) {
+                d[i] = [i];
+            }
+            for (var j = 0; j <= m; j++) {
+                d[0][j] = j;
+            }
+
+            for (var i = 1; i <= n; i++) {
+                for (var j = 1; j <= m; j++) {
+                    var cost = (t[j - 1] === s[i - 1]) ? 0 : 1;
+                    d[i] = d[i] || [];
+                    d[i][j] = Math.min(
+                        d[i - 1][j] + 1,
+                        d[i][j - 1] + 1,
+                        d[i - 1][j - 1] + cost
+                    );
+                }
+            }
+
+            return d[n][m];
+        }
+
+        function submitForm() {
+
+            var keywords = document.getElementById("keywords").value.trim(); 
+
+           
+            if (keywords === "" || !yanlis(keywords)) {
+
+                document.getElementById("suggestions").innerHTML = "";
+                document.getElementById("searchForm").submit(); 
+                return;
+            }
+
+          
+            var eslesme = yanlis(keywords);
+
+          
+            tahminGöster(eslesme);
+        }
+
+        function tahminGöster(suggestion) {
+            var suggestionElement = document.getElementById("suggestions");
+            suggestionElement.innerHTML = "Bunu mu demek istediniz: <b>" + suggestion + "</b>";
+        }
+    </script>
+</body>
+</html>
+
